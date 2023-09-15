@@ -1,0 +1,52 @@
+# ===== Figure settings ===============================
+fig, axs = plt.subplots(1, 2,figsize=(10, 4), dpi= 300, layout = 'tight')
+
+# ====================================================
+# ========= Figure a =================================
+# ====================================================
+axs[0].set_xlabel('Time (ns)', fontsize=12) 
+axs[0].set_ylabel('Current (mA)',fontsize=12)
+#axs[0].set_xscale("log"); 
+#axs[0].set_ylim([-150, 0])
+#axs[0].tick_params(axis='both', which='major', labelsize=10)
+axs[0].set_xticks(np.arange(0, 251, 50))
+axs[0].set_xticks(np.arange(0, 251, 10),minor=True)
+axs[0].set_yticks(np.arange(0, 22, 5))
+axs[0].set_yticks(np.arange(0, 22, 1),minor=True)
+axs[0].grid(which='major', alpha=0.2)
+axs[0].grid(which='minor', alpha=0.5)
+Current_max = []
+Current_end = []
+Voltage = []
+n = 50
+colors = plt.cm.viridis(np.linspace(0, 1, n)) # using color map for plot
+
+for i in range (n):
+    data = pd.read_csv('d06_100ns_'+str('{:.1f}'.format(0.2*(i+1))+'V.csv'))
+    axs[0].plot(data['Time (s)'] * 1e9, data['Voltage (V)']*1000/50, color=colors[i], label=str('{:.1f}'.format(0.2*(i+1))+'V'))
+    Imax = np.max(data['Voltage (V)'])*1000/50 #mA
+    Iend = data['Voltage (V)'][555]*1000/50
+    Current_max.append(Imax)
+    Current_end.append(Iend)
+    Voltage.append(0.2*(i+1))
+    
+#axs[0].legend(fontsize="8", loc="best")
+#print(Current)
+#print(Voltage)
+
+
+# ====================================================
+# ========= Figure b =================================
+# ====================================================
+axs[1].set_xlabel('Voltage (V)', fontsize=12) 
+axs[1].set_ylabel('Current (mA)',fontsize=12)
+#axs[1].set_xscale("log"); 
+#axs[1].set_ylim([-150, 0])
+axs[1].tick_params(axis='both', which='major', labelsize=10)
+axs[1].grid()
+
+axs[1].plot(Voltage, Current_max,'.-', label='I_max')
+axs[1].plot(Voltage, Current_end,'.-',label='I_end')
+axs[1].legend(fontsize="8", loc="best")
+
+#plt.savefig('100ns_10V.jpg')
